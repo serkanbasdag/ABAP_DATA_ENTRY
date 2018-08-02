@@ -1,0 +1,25 @@
+TABLES: ZPERS_AVANS.
+
+SELECTION-SCREEN BEGIN OF BLOCK al WITH FRAME.
+  PARAMETERS: p_tcno like zpers_avans-tckno OBLIGATORY,
+              p_avans like zpers_avans-avans_miktari OBLIGATORY.
+SELECTION-SCREEN end OF BLOCK al.
+
+SELECT SINGLE tckno from zpers_bilg_video into p_tcno
+  WHERE tckno = p_tcno.
+  if sy-subrc ne 0. 
+    MESSAGE 'personnel not found!' TYPE 'E'.
+  endif.
+
+  CLEAR: ZPERS_AVANS.
+  ZPERS_AVANS-tckno          = p_tcno.
+  ZPERS_AVANS-AVANS_MIKTARI  = p_avans.
+  ZPERS_AVANS-AVANS_DATE     = SY-DATUM.
+  ZPERS_AVANS-AVANS_TIME     = SY-UZEIT .
+  INSERT ZPERS_AVANS.
+  if sy-subrc eq 0.
+    MESSAGE 'the registration was successful!' TYPE 'S'.
+    else.
+      MESSAGE 'registration failed!' TYPE 'S' DISPLAY LIKE 'E'.
+      EXIT.
+      ENDIF.
